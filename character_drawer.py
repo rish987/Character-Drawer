@@ -7,7 +7,7 @@ Created:
 24/03/2017
 
 Last Modified:
-Thu 30 Mar 2017 09:54:27 AM PDT
+Thu 30 Mar 2017 10:22:25 AM PDT
 
 Description:
 This program provides an easy-to-use environment where a user can draw a symbol
@@ -59,7 +59,8 @@ DC_SIZE = 50;
 # drawing canvas size in pixels (both width and height)
 DC_SIZE_PX = 200;
 
-# currently selected number
+# currently entered character
+char = '';
 
 
 def main ():
@@ -106,37 +107,29 @@ def main ():
 
     # ---
 
-    # --- TODO add field to: enter text ---
+    # --- add field to: enter text ---
 
     # frame to hold number entering stuff
-    number_panel = Frame( window, bg='white');
+    char_panel = Frame( window, bg='white');
 
     # create label
-    number_drawn_lbl = Label( number_panel, text='Number Drawn:', bg='white' );
-    number_drawn_lbl.pack( side=LEFT );
+    char_drawn_lbl = Label( char_panel, text='Character Drawn:', bg='white' );
+    char_drawn_lbl.pack( side=LEFT );
 
-    # list of numbers
-    number_list = [];
+    # character entered, trace it to limit it to 1 character 
+    char_entered = StringVar()
+    char_entered.trace( "w", lambda name, index, mode, sv=char_entered: 
+        char_callback( char_entered ) );
 
-    # insert numbers into the list of numbers
-    for num in range( 0, 10 ):
-        number_list.append( str( num ) );
+    # to store character entered; make sure that field only accepts 
+    # one character
+    char_field = Entry( char_panel, textvariable=char_entered, width=1 );
+    char_field.pack( side=LEFT );
 
-    # variable to hold current number TODO make global?
-    number_drawn = StringVar( number_panel );
-    number_drawn.set( number_list[ 0 ] );
-
-    # create list box of numbers
-    number_menu = apply( OptionMenu, ( number_panel, number_drawn ) + tuple(
-        number_list ) );
-    number_menu.config( bg='white' );
-    number_menu.pack( side=LEFT );
-    
-    number_panel.pack();
+    # display the char panel
+    char_panel.pack();
  
     # ---
-
-    # TODO make sure that field only accepts one character
 
     # frame to hold control panel widgets
     control_panel = Frame( window );
@@ -155,6 +148,23 @@ def main ():
 
     # end program TODO remove?
     # window.destroy();
+
+def char_callback ( entered ):
+    """
+    Limits an entered character to 1 character.
+
+    Parameters:
+    entered - the character entered
+    """
+    # something was entered
+    if len( entered.get() ) > 0:
+        # reset the current character to the first character in the field
+        global char;
+        char = entered.get()[ 0 ];
+
+        # set the entered character to its own first character
+        entered.set( char );
+    print char;
 
 # TODO TODO write event listeners
 def press_mouse ( event ):
