@@ -7,7 +7,7 @@ Created:
 24/03/2017
 
 Last Modified:
-Wed 29 Mar 2017 11:53:13 PM PDT
+Thu 30 Mar 2017 09:54:27 AM PDT
 
 Description:
 This program provides an easy-to-use environment where a user can draw a symbol
@@ -54,28 +54,31 @@ DC_MAX_SIZE = 100;
 
 # drawing canvas size (both width and height)
 # NOTE: must evenly divide DC_SIZE_PX
-DC_SIZE = 20;
+DC_SIZE = 50;
 
 # drawing canvas size in pixels (both width and height)
 DC_SIZE_PX = 200;
+
+# currently selected number
+
 
 def main ():
     """
     Sets up the canvas for drawing and using this program.
     """
-    # set up the window with TODO appropriate dimensions 
+    # set up the window with appropriate dimensions 
     window = Tk();
     window.wm_title( "Character Drawer" );
     window.resizable( width=False, height=False );
     window.geometry( '{}x{}'.format( WINDOW_SIZE, WINDOW_SIZE ) );
     window.configure( background='white' );
 
-    # --- TODO create the drawing canvas with its grid ---
+    # --- create the drawing canvas with its grid ---
 
     # initialize the canvas with constant dimensions
-    drawing_canvas = Canvas( window, width=DC_SIZE_PX, height=DC_SIZE_PX,
-        background='white', highlightbackground='black', 
-        highlightcolor='black' );
+    drawing_canvas = Canvas( window, width=DC_SIZE_PX + 1, 
+        height=DC_SIZE_PX + 1, background='white', highlightbackground='white', 
+        highlightcolor='white' );
     
     # load the drawing canvas
     drawing_canvas.pack( padx=PADDING, pady=PADDING );
@@ -92,16 +95,57 @@ def main ():
         pos = ( line_i + 1 ) * lines_offset;
 
         # draw the x and y gridlines
-        drawing_canvas.create_line( 0, pos, DC_SIZE_PX, pos,
+        drawing_canvas.create_line( 1, pos + 1, DC_SIZE_PX, pos + 1,
             fill='light grey' );
-        drawing_canvas.create_line( pos, 0, pos, DC_SIZE_PX, 
+        drawing_canvas.create_line( pos + 1, 1, pos + 1, DC_SIZE_PX, 
             fill='light grey' );
+
+    # draw the bounding rectangle of the grid
+    drawing_canvas.create_rectangle( 1, 1, DC_SIZE_PX + 1, DC_SIZE_PX + 1,
+        outline='black' );
 
     # ---
 
-    # TODO add field to: enter text
+    # --- TODO add field to: enter text ---
+
+    # frame to hold number entering stuff
+    number_panel = Frame( window, bg='white');
+
+    # create label
+    number_drawn_lbl = Label( number_panel, text='Number Drawn:', bg='white' );
+    number_drawn_lbl.pack( side=LEFT );
+
+    # list of numbers
+    number_list = [];
+
+    # insert numbers into the list of numbers
+    for num in range( 0, 10 ):
+        number_list.append( str( num ) );
+
+    # variable to hold current number TODO make global?
+    number_drawn = StringVar( number_panel );
+    number_drawn.set( number_list[ 0 ] );
+
+    # create list box of numbers
+    number_menu = apply( OptionMenu, ( number_panel, number_drawn ) + tuple(
+        number_list ) );
+    number_menu.config( bg='white' );
+    number_menu.pack( side=LEFT );
+    
+    number_panel.pack();
+ 
+    # ---
+
     # TODO make sure that field only accepts one character
+
+    # frame to hold control panel widgets
+    control_panel = Frame( window );
+
     # TODO add buttons to: save image, clear canvas
+
+    # display the control panel
+    control_panel.pack();
+
     # TODO set up event listeners
     # TODO set up the necessary folders
     # TODO TODO anymore setup that needs to be done
