@@ -1,0 +1,32 @@
+File: README
+Author: Rishikesh Vaishnav
+
+Created: 30/03/2017
+
+Last Modified:
+Thu 30 Mar 2017 07:57:59 PM PDT
+
+Description:
+    A python application where a user can draw a symbol representing an ASCII
+    character, enter what character they drew, and save the data representing
+    their drawing.
+    These files will be saved in a folder in this program's directory called:
+    char_data/[character drawn]_saved
+
+    'character drawn' refers to the ASCII character the user associated this
+    character to when creating the file.
+
+    The data will be saved in this folder's subdirectory called:
+    data/ 
+
+    Data files will be named:
+    [num]_[character drawn]_data.dat
+
+    'num' refers to the next number after the maximum numbered file already in
+    that folder. Think of it as the ID number of this drawn character.
+
+    The data file will contain the following:
+    - On the first line, the ASCII character this number represents
+    - On the following lines, the list of pixel values drawn on the screen, 
+      represented as 0s (not drawn) and 1s (drawn), starting from the upper left
+      corner and going from left to right and top to bottom.
