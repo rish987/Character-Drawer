@@ -7,7 +7,7 @@ Created:
 24/03/2017
 
 Last Modified:
-Thu 30 Mar 2017 06:27:56 PM PDT
+Thu 30 Mar 2017 07:41:20 PM PDT
 
 Description:
 This program provides an easy-to-use environment where a user can draw a symbol
@@ -16,7 +16,7 @@ the data representing their drawing and the number it is associated with it, as
 well as a .png image file of their drawing.
 
 These files will be saved in a folder in this program's directory called:
-num_data/[character drawn]_saved
+char_data/[character drawn]_saved
 
 'character drawn' refers to the ASCII character the user associated this
 character to when creating the file.
@@ -41,6 +41,7 @@ as 0s (not drawn) and 1s (drawn), starting from the upper left corner and going
 from left to right and top to bottom.
 """
 from Tkinter import *
+import os
 
 # window size (both width and height)
 WINDOW_WIDTH = 250;
@@ -75,6 +76,9 @@ drawing_canvas = 0;
 # the drawing
 drawing = [ [ False for col in range( 0, DC_SIZE ) ]
               for row in range( 0, DC_SIZE ) ];
+
+# was nothing entered in the text area for the entered character?
+nothing_entered = True;
 
 def main ():
     """
@@ -150,14 +154,17 @@ def main ():
 
     # ---
 
-    # TODO set up the necessary folders
-    # TODO TODO anymore setup that needs to be done
+    # --- set up the necessary folders ---
+
+    # char folder does not already exist
+    if not os.path.isdir( 'char_data' ):
+        # make the char folder
+        os.makedirs( 'char_data' );
+
+    # ---
 
     # begin window loop
     window.mainloop();
-
-    # end program TODO remove?
-    # window.destroy();
 
 def char_callback ( entered ):
     """
@@ -166,8 +173,16 @@ def char_callback ( entered ):
     Parameters:
     entered - the character entered
     """
+    global nothing_entered;
+
+    # backspace was entered
+    if len( entered.get() ) == 0:
+        nothing_entered = True;
+
     # something was entered
     if len( entered.get() ) > 0:
+        nothing_entered = False;
+
         # reset the current character to the first character in the field
         global char;
         char = entered.get()[ 0 ];
@@ -233,10 +248,71 @@ def save_button ():
     Handles the user pressing the save button by saving their drawing's image
     and data to file.
     """
-    # TODO check that the text field has one character in it to associate with
+    # check that the text field has one character in it to associate with
     # this drawing
-    # TODO TODO save the drawing's data
-    # TODO TODO save the drawing's image
+    if nothing_entered:
+        # don't save anything
+        return;
+
+    # --- check that the necessary folders exist ---
+
+    # path to this char
+    this_path = 'char_data/' + char + '_saved';
+
+    # path to this char's data
+    this_data_path = this_path + '/data';
+
+    # path to this char's pics
+    this_pics_path = this_path + '/pics';
+
+    # check that the folders for this character do not already exist
+
+    if not os.path.isdir( this_path ):
+        os.makedirs( this_path );
+    if not os.path.isdir( this_data_path ):
+        os.makedirs( this_data_path );
+    if not os.path.isdir( this_pics_path ):
+        os.makedirs( this_pics_path );
+
+    # ---
+
+    # number to use for this file
+    this_num = 1;
+
+    # continue while both the data and image file for this number exist
+    while os.path.exists( this_data_path + '/' + str( this_num  )+ '_' + char 
+    + '_' + 'data.dat' ) and os.path.exists( this_pics_path + '/' 
+    + str( this_num  )+ '_' + char + '_' + 'pic.png' ):
+        this_num = this_num + 1;
+
+    # --- TODO save the drawing's data ---
+
+    # open file to write to
+    data_file = open( this_data_path + '/' + str( this_num  )+ '_' + char 
+    + '_' + 'data.dat', 'w' );
+
+    # write this character to the data file
+    data_file.write( char );
+    data_file.write( '\n' );
+
+    # go through all of the rows in the drawing
+    for row in range( 0, len( drawing ) ):
+        # go through all of the columns in this row of the drawing
+        for col in range( 0, len( drawing[ row ] ) ):
+            # this bit is on
+            if drawing[ row ][ col ]:
+                data_file.write( '1' )
+            else:
+                data_file.write( '0' )
+        data_file.write( '\n' )
+
+    data_file.close();
+    # ---
+
+    # --- TODO save the drawing's image --- 
+
+
+    # ---
 
 def draw_at ( x_loc, y_loc ):
     """
@@ -261,7 +337,7 @@ def draw_at ( x_loc, y_loc ):
     y_ind = y_loc / BIT_SIZE_PX;
 
     # set this bit in the drawing
-    drawing[ x_ind ][ y_ind ] = True;
+    drawing[ y_ind ][ x_ind ] = True;
 
     redraw_canvas();
 
@@ -305,10 +381,10 @@ def redraw_canvas ():
             if drawing[ row ][ col ]:
                 # draw this bit
                 drawing_canvas.create_rectangle( 
-                    BIT_SIZE_PX * row + 2, 
                     BIT_SIZE_PX * col + 2, 
-                    BIT_SIZE_PX * row + BIT_SIZE_PX,
+                    BIT_SIZE_PX * row + 2, 
                     BIT_SIZE_PX * col + BIT_SIZE_PX,
+                    BIT_SIZE_PX * row + BIT_SIZE_PX,
                     fill='black');
 
 # start the program
