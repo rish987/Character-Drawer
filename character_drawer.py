@@ -7,13 +7,12 @@ Created:
 24/03/2017
 
 Last Modified:
-Thu 30 Mar 2017 07:41:20 PM PDT
+Thu 30 Mar 2017 07:49:21 PM PDT
 
 Description:
 This program provides an easy-to-use environment where a user can draw a symbol
 that represents an ASCII character, enter what character they drew, and save
-the data representing their drawing and the number it is associated with it, as
-well as a .png image file of their drawing.
+the data representing their drawing and the number it is associated with it.
 
 These files will be saved in a folder in this program's directory called:
 char_data/[character drawn]_saved
@@ -21,24 +20,20 @@ char_data/[character drawn]_saved
 'character drawn' refers to the ASCII character the user associated this
 character to when creating the file.
 
-The data and pictures will be saved in this folder's subdirectories called:
+The data will be saved in this folder's subdirectory called:
 data/ 
-pics/
 
 Data files will be named:
 [num]_[character drawn]_data.dat
-
-Picture files will be named:
-[num]_[character drawn]_pic.png
 
 'num' refers to the next number after the maximum numbered file already in that
 folder. Think of it as the ID number of this drawn character.
 
 The data file will contain the following:
 - On the first line, the ASCII character this number represents
-- On the second line, the list of pixel values drawn on the screen, represented
-as 0s (not drawn) and 1s (drawn), starting from the upper left corner and going
-from left to right and top to bottom.
+- On the following lines, the list of pixel values drawn on the screen, 
+  represented as 0s (not drawn) and 1s (drawn), starting from the upper left
+  corner and going from left to right and top to bottom.
 """
 from Tkinter import *
 import os
@@ -262,17 +257,12 @@ def save_button ():
     # path to this char's data
     this_data_path = this_path + '/data';
 
-    # path to this char's pics
-    this_pics_path = this_path + '/pics';
-
     # check that the folders for this character do not already exist
 
     if not os.path.isdir( this_path ):
         os.makedirs( this_path );
     if not os.path.isdir( this_data_path ):
         os.makedirs( this_data_path );
-    if not os.path.isdir( this_pics_path ):
-        os.makedirs( this_pics_path );
 
     # ---
 
@@ -281,11 +271,10 @@ def save_button ():
 
     # continue while both the data and image file for this number exist
     while os.path.exists( this_data_path + '/' + str( this_num  )+ '_' + char 
-    + '_' + 'data.dat' ) and os.path.exists( this_pics_path + '/' 
-    + str( this_num  )+ '_' + char + '_' + 'pic.png' ):
+    + '_' + 'data.dat' ):
         this_num = this_num + 1;
 
-    # --- TODO save the drawing's data ---
+    # --- save the drawing's data ---
 
     # open file to write to
     data_file = open( this_data_path + '/' + str( this_num  )+ '_' + char 
@@ -307,11 +296,6 @@ def save_button ():
         data_file.write( '\n' )
 
     data_file.close();
-    # ---
-
-    # --- TODO save the drawing's image --- 
-
-
     # ---
 
 def draw_at ( x_loc, y_loc ):
